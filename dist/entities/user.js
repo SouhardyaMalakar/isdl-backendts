@@ -15,6 +15,7 @@ const Booking_1 = require("./Booking");
 let User = class User extends typeorm_1.BaseEntity {
 };
 __decorate([
+    (0, typeorm_1.Column)({ primary: true }),
     (0, typeorm_1.PrimaryGeneratedColumn)('increment'),
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
@@ -27,21 +28,21 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Booking_1.Booking, booking => booking.id, { cascade: true }),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], User.prototype, "password", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], User.prototype, "username", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Booking_1.Booking, booking => booking.actor),
     __metadata("design:type", Array)
 ], User.prototype, "bookings", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Boolean)
 ], User.prototype, "isAdmin", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], User.prototype, "username", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], User.prototype, "password", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)('user')
 ], User);

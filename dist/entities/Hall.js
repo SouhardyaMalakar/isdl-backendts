@@ -15,6 +15,7 @@ const Booking_1 = require("./Booking");
 let Hall = class Hall extends typeorm_1.BaseEntity {
 };
 __decorate([
+    (0, typeorm_1.Column)({ primary: true }),
     (0, typeorm_1.PrimaryGeneratedColumn)('increment'),
     __metadata("design:type", Number)
 ], Hall.prototype, "id", void 0);
@@ -23,11 +24,7 @@ __decorate([
     __metadata("design:type", String)
 ], Hall.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ unique: true }),
-    __metadata("design:type", String)
-], Hall.prototype, "email", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => Booking_1.Booking, booking => booking.id, { cascade: true }),
+    (0, typeorm_1.OneToMany)(() => Booking_1.Booking, booking => booking.hall),
     __metadata("design:type", Array)
 ], Hall.prototype, "bookings", void 0);
 __decorate([
@@ -47,7 +44,7 @@ __decorate([
     __metadata("design:type", String)
 ], Hall.prototype, "hall_image", void 0);
 __decorate([
-    (0, typeorm_1.Column)("int", { array: true }),
+    (0, typeorm_1.Column)("int", { array: true, nullable: true }),
     __metadata("design:type", Array)
 ], Hall.prototype, "hall_selectedslots", void 0);
 Hall = __decorate([

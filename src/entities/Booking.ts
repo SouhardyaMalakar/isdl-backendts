@@ -1,4 +1,4 @@
-import {Entity, BaseEntity, Column, PrimaryGeneratedColumn, ManyToOne,} from "typeorm"
+import {Entity, BaseEntity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn,} from "typeorm"
 import { Hall } from "./Hall";
 import { User } from "./User"
 
@@ -9,10 +9,17 @@ export class Booking extends BaseEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
     
-    @ManyToOne(() => User, user => user.id , {cascade:true})
+    @ManyToOne(() => User, user => user.bookings, {onDelete: 'CASCADE'})
+    @JoinColumn({
+        name: 'actor_id'
+    })
     actor: User;
   
-    @ManyToOne(() => Hall, hall => hall.id, {cascade:true})
+    @ManyToOne(() => Hall, hall => hall.bookings, {onDelete: 'CASCADE'})
+    @JoinColumn({
+        name: 'hall_id'
+        
+    })
     hall: Hall;
 
     @Column()
@@ -21,10 +28,10 @@ export class Booking extends BaseEntity {
     @Column()
     pending: boolean
 
-    @Column()
+    @Column({nullable:true})
     slotStart: Date
 
-    @Column()
+    @Column({nullable:true})
     slotEnd: Date
 
 }

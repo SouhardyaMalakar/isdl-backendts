@@ -1,20 +1,18 @@
-import {Entity, BaseEntity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm"
+import {Entity, BaseEntity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne} from "typeorm"
 import { Booking } from "./Booking"
  
 @Entity('hall')
 // hall is the name of the table
 export class Hall extends BaseEntity {
 
+    @Column({ primary: true})
     @PrimaryGeneratedColumn('increment')
     id: number;
 
     @Column()
     name :string;
 
-    @Column({unique:true})
-    email: string;
-
-    @OneToMany(() => Booking, booking => booking.id, {cascade:true})
+    @OneToMany(() => Booking, booking => booking.hall)
     bookings: Booking[]
     
     @Column()
@@ -29,7 +27,7 @@ export class Hall extends BaseEntity {
     @Column()
     hall_image : string;
 
-    @Column("int", { array: true })
+    @Column("int", { array: true, nullable:true })
     hall_selectedslots: number[];
 
 }

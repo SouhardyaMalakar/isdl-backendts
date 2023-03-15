@@ -20,11 +20,17 @@ __decorate([
     __metadata("design:type", Number)
 ], Booking.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => User_1.User, user => user.id, { cascade: true }),
+    (0, typeorm_1.ManyToOne)(() => User_1.User, user => user.bookings, { onDelete: 'CASCADE' }),
+    (0, typeorm_1.JoinColumn)({
+        name: 'actor_id'
+    }),
     __metadata("design:type", User_1.User)
 ], Booking.prototype, "actor", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => Hall_1.Hall, hall => hall.id, { cascade: true }),
+    (0, typeorm_1.ManyToOne)(() => Hall_1.Hall, hall => hall.bookings, { onDelete: 'CASCADE' }),
+    (0, typeorm_1.JoinColumn)({
+        name: 'hall_id'
+    }),
     __metadata("design:type", Hall_1.Hall)
 ], Booking.prototype, "hall", void 0);
 __decorate([
@@ -36,11 +42,11 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Booking.prototype, "pending", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", Date)
 ], Booking.prototype, "slotStart", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", Date)
 ], Booking.prototype, "slotEnd", void 0);
 Booking = __decorate([
