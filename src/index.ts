@@ -11,8 +11,10 @@ import { HallRouter } from "./routes/Hall_routes";
 import { BookingRouter } from "./routes/Booking_routes";
 
 const app=express();
-// middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+  }));
 app.use(bodyParser.json())
 app.use(express.json());
 app.use(UserRouter);
@@ -29,7 +31,7 @@ const main = async () =>{
             password: "2002",
             database: "postgres",
             synchronize: true,
-            logging: true,
+            // logging: true,
             entities: [User,Hall,Booking],
         });
         console.log("connected to database !")

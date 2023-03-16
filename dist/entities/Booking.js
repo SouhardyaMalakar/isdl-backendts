@@ -43,11 +43,11 @@ __decorate([
 ], Booking.prototype, "pending", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], Booking.prototype, "slotStart", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], Booking.prototype, "slotEnd", void 0);
 Booking = __decorate([
     (0, typeorm_1.Entity)('booking')

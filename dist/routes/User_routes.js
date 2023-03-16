@@ -25,22 +25,22 @@ const transporter = nodemailer_1.default.createTransport({
     port: 465,
     host: "smtp.gmail.com",
     auth: {
-        user: '20ucs197@lnmiit.ac.in',
-        pass: 'Jesus@69420',
+        user: "20ucs197@lnmiit.ac.in",
+        pass: "Jesus@69420",
     },
     secure: true,
 });
 const mailData1 = {
-    from: '20ucs197@lnmiit.ac.in',
-    to: 'souhardyamalakar.cob@gmail.com',
-    subject: 'LHMS Booking',
-    text: 'Request Accecpted'
+    from: "20ucs197@lnmiit.ac.in",
+    to: "souhardyamalakar.cob@gmail.com",
+    subject: "LHMS Booking",
+    text: "Request Accecpted",
 };
 const mailData2 = {
-    from: '20ucs197@lnmiit.ac.in',
-    to: 'souhardyamalakar.cob@gmail.com',
-    subject: 'LHMS Booking',
-    text: 'Request Denied'
+    from: "20ucs197@lnmiit.ac.in",
+    to: "souhardyamalakar.cob@gmail.com",
+    subject: "LHMS Booking",
+    text: "Request Denied",
 };
 router.post("/api/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password, username, isAdmin } = req.body;
@@ -88,7 +88,6 @@ router.post("/api/acceptRequest", (req, res) => __awaiter(void 0, void 0, void 0
         const booking = yield Booking_1.Booking.findOneBy({ id: id });
         if (user.isAdmin && booking) {
             booking.pending = false;
-            yield Booking_1.Booking.delete({ id: id });
             if (ac) {
                 Booking_1.Booking.update({ id: id }, Object.assign({}, booking));
                 transporter.sendMail(mailData1, function (err, info) {
@@ -99,6 +98,7 @@ router.post("/api/acceptRequest", (req, res) => __awaiter(void 0, void 0, void 0
                 });
             }
             else {
+                yield Booking_1.Booking.delete({ id: id });
                 transporter.sendMail(mailData2, function (err, info) {
                     if (err)
                         console.log(err);
@@ -106,11 +106,15 @@ router.post("/api/acceptRequest", (req, res) => __awaiter(void 0, void 0, void 0
                         console.log(info);
                 });
             }
-            res.send(ac);
+            res.send("oka");
         }
         else {
-            res.send("Invalid Access");
+            res.send(null);
         }
     }
+}));
+router.post("/api/acceptAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield Booking_1.Booking.clear();
+    return;
 }));
 //# sourceMappingURL=User_routes.js.map

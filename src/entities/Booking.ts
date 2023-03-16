@@ -29,9 +29,9 @@ export class Booking extends BaseEntity {
     pending: boolean
 
     @Column({nullable:true})
-    slotStart: Date
+    slotStart: string
 
     @Column({nullable:true})
-    slotEnd: Date
+    slotEnd: string
 
 }

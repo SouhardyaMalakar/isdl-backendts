@@ -20,14 +20,22 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Booking_1 = require("../entities/Booking");
 const Hall_1 = require("../entities/Hall");
 const jwt_decode_1 = __importDefault(require("jwt-decode"));
-router.get("/api/createBooking", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/api/createBooking", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { hall_id, jwt, date, start, end } = req.body;
-    console.log(date);
-    const secret = 'kingcrab';
+    const dt = date.toString();
+    const dat = dt.split("/");
+    let m = dat[1];
+    let d = dat[0];
+    if (m.length == 1)
+        m = "0" + m;
+    if (d.length == 1)
+        d = "0" + d;
+    const dte = dat[2] + "-" + m + "-" + d;
+    const secret = "kingcrab";
     const verify = jsonwebtoken_1.default.verify(jwt, secret);
     if (verify) {
-        const user = (0, jwt_decode_1.default)(req.body.token);
-        const hall = yield Hall_1.Hall.findOneBy({ id: parseInt(hall_id) });
+        const user = (0, jwt_decode_1.default)(jwt);
+        const hall = yield Hall_1.Hall.findOneBy({ id: hall_id });
         if (!user || !hall) {
             return res.send("user does not exist !");
         }
@@ -36,7 +44,12 @@ router.get("/api/createBooking", (req, res) => __awaiter(void 0, void 0, void 0,
             hall: hall,
             booked: false,
             pending: true,
+            slotStart: dte + "T" + start.slice(0, 5),
+            slotEnd: dte + "T" + end.slice(0, 5),
         });
+        console.log(dte + "T" + start.slice(0, 5));
+        console.log(dte + "T" + end.slice(0, 5));
+        console.log(booking);
         yield booking.save();
         res.send(booking);
     }
@@ -45,21 +58,31 @@ router.get("/api/createBooking", (req, res) => __awaiter(void 0, void 0, void 0,
 }));
 router.get("/api/getAllBookings", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const Bookings = yield Booking_1.Booking.find();
-    console.log(Bookings);
     res.send(Bookings);
 }));
-router.get("/api/getUserBookings", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/api/getHallBookings", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const Bookings = yield Booking_1.Booking.find({
+        where: {
+            hall: { id: req.body.id },
+        },
+    });
+    res.send(Bookings);
+}));
+router.post("/api/getUserBookings", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { jwt } = req.body;
-    const secret = 'kingcrab';
+    if (!jwt)
+        return;
+    const secret = "kingcrab";
     const verify = jsonwebtoken_1.default.verify(jwt, secret);
     if (verify) {
         const user = (0, jwt_decode_1.default)(jwt);
         const Bookings = yield Booking_1.Booking.find({
             where: {
-                actor: { id: user.id }
-            }
+                actor: { id: user.id },
+            },
         });
         res.send(Bookings);
+        console.log(Bookings);
     }
 }));
 //# sourceMappingURL=Booking_routes.js.map

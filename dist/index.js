@@ -24,7 +24,10 @@ const Login_1 = require("./routes/Login");
 const Hall_routes_1 = require("./routes/Hall_routes");
 const Booking_routes_1 = require("./routes/Booking_routes");
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 app.use(body_parser_1.default.json());
 app.use(express_1.default.json());
 app.use(User_routes_1.UserRouter);
@@ -41,7 +44,6 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             password: "2002",
             database: "postgres",
             synchronize: true,
-            logging: true,
             entities: [User_1.User, Hall_1.Hall, Booking_1.Booking],
         });
         console.log("connected to database !");
