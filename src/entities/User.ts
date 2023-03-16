@@ -2,7 +2,6 @@ import {Entity, BaseEntity, Column, PrimaryGeneratedColumn, OneToMany} from "typ
 import { Booking } from "./Booking"
  
 @Entity('user')
-// user is the name of the table
 export class User extends BaseEntity {
     @Column({primary: true})
     @PrimaryGeneratedColumn('increment')
@@ -20,7 +19,7 @@ export class User extends BaseEntity {
     @Column()
     username : string;
 
-    @OneToMany(() => Booking, booking => booking.actor)
+    @OneToMany(() => Booking, booking => booking.actor, {onDelete: "CASCADE"})
     bookings: Booking []
 
     @Column()

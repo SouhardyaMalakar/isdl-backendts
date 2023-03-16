@@ -2,7 +2,6 @@ import {Entity, BaseEntity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne}
 import { Booking } from "./Booking"
  
 @Entity('hall')
-// hall is the name of the table
 export class Hall extends BaseEntity {
 
     @Column({ primary: true})
@@ -12,7 +11,7 @@ export class Hall extends BaseEntity {
     @Column()
     name :string;
 
-    @OneToMany(() => Booking, booking => booking.hall)
+    @OneToMany(() => Booking, booking => booking.hall, {onDelete: "CASCADE"})
     bookings: Booking[]
     
     @Column()

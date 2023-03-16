@@ -31,8 +31,14 @@ router.post("/api/createBooking", (req, res) => __awaiter(void 0, void 0, void 0
     if (d.length == 1)
         d = "0" + d;
     const dte = dat[2] + "-" + m + "-" + d;
-    const secret = "kingcrab";
-    const verify = jsonwebtoken_1.default.verify(jwt, secret);
+    const secret = process.env.ACCESS_TOKEN_SECRET;
+    let verify;
+    try {
+        verify = jsonwebtoken_1.default.verify(jwt, secret);
+    }
+    catch (err) {
+        res.send(err.body);
+    }
     if (verify) {
         const user = (0, jwt_decode_1.default)(jwt);
         const hall = yield Hall_1.Hall.findOneBy({ id: hall_id });
@@ -47,9 +53,6 @@ router.post("/api/createBooking", (req, res) => __awaiter(void 0, void 0, void 0
             slotStart: dte + "T" + start.slice(0, 5),
             slotEnd: dte + "T" + end.slice(0, 5),
         });
-        console.log(dte + "T" + start.slice(0, 5));
-        console.log(dte + "T" + end.slice(0, 5));
-        console.log(booking);
         yield booking.save();
         res.send(booking);
     }
@@ -71,9 +74,15 @@ router.post("/api/getHallBookings", (req, res) => __awaiter(void 0, void 0, void
 router.post("/api/getUserBookings", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { jwt } = req.body;
     if (!jwt)
-        return;
-    const secret = "kingcrab";
-    const verify = jsonwebtoken_1.default.verify(jwt, secret);
+        return res.send("unauthorised access");
+    const secret = process.env.ACCESS_TOKEN_SECRET;
+    let verify;
+    try {
+        verify = jsonwebtoken_1.default.verify(jwt, secret);
+    }
+    catch (err) {
+        return res.send(err.body);
+    }
     if (verify) {
         const user = (0, jwt_decode_1.default)(jwt);
         const Bookings = yield Booking_1.Booking.find({
@@ -82,7 +91,8 @@ router.post("/api/getUserBookings", (req, res) => __awaiter(void 0, void 0, void
             },
         });
         res.send(Bookings);
-        console.log(Bookings);
     }
+    else
+        return res.send("something went wrong !");
 }));
 //# sourceMappingURL=Booking_routes.js.map

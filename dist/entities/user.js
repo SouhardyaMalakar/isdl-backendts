@@ -36,7 +36,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Booking_1.Booking, booking => booking.actor),
+    (0, typeorm_1.OneToMany)(() => Booking_1.Booking, booking => booking.actor, { onDelete: "CASCADE" }),
     __metadata("design:type", Array)
 ], User.prototype, "bookings", void 0);
 __decorate([

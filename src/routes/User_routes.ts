@@ -5,29 +5,19 @@ import Jwt from "jsonwebtoken";
 import jwt_decode from "jwt-decode";
 import { Booking } from "../entities/Booking";
 import nodemailer from "nodemailer";
+require("dotenv").config();
+
+const pswd: string = process.env.ACCESS_PASSWORD as string;
 
 const transporter = nodemailer.createTransport({
   port: 465,
   host: "smtp.gmail.com",
   auth: {
-    user: "20ucs197@lnmiit.ac.in",
-    pass: "Jesus@69420",
+    user: "jesus2169.god@gmail.com",
+    pass: pswd,
   },
   secure: true,
 });
-const mailData1 = {
-  from: "20ucs197@lnmiit.ac.in",
-  to: "souhardyamalakar.cob@gmail.com",
-  subject: "LHMS Booking",
-  text: "Request Accecpted",
-};
-const mailData2 = {
-  from: "20ucs197@lnmiit.ac.in",
-  to: "souhardyamalakar.cob@gmail.com",
-  subject: "LHMS Booking",
-  text: "Request Denied",
-};
-
 router.post("/api/register", async (req, res) => {
   const { name, email, password, username, isAdmin } = req.body;
   const user1: User | null = await User.findOneBy({ email: email });
@@ -47,55 +37,81 @@ router.post("/api/register", async (req, res) => {
 
 router.post("/api/getAllPending", async (req, res) => {
   const { jwt } = req.body;
-  const secret = "kingcrab";
-  const verify = Jwt.verify(jwt, secret);
+  if (!jwt) return res.send("unauthorised access");
+  const secret: string = process.env.ACCESS_TOKEN_SECRET as string;
+
+  let verify;
+  try {
+    verify = Jwt.verify(jwt, secret);
+  } catch (err) {
+    res.send(err.body);
+  }
   if (verify) {
     const user: User = jwt_decode(jwt);
-    console.log(user);
     if (user.isAdmin) {
       const pendings = await Booking.find({
         where: {
           pending: true,
         },
+        relations: ['actor','hall']
       });
       res.send(pendings);
     } else {
       res.send("Invalid Access");
     }
   }
+  return;
 });
 
 router.post("/api/acceptRequest", async (req, res) => {
   const { jwt, id, ac } = req.body;
-  const secret = "kingcrab";
-  const verify = Jwt.verify(jwt, secret);
+  if (!jwt) return;
+  const secret: string = process.env.ACCESS_TOKEN_SECRET as string;
+  let verify;
+  try {
+    verify = Jwt.verify(jwt, secret);
+  } catch (err) {
+    res.send(err.body);
+  }
   if (verify) {
     const user: User = jwt_decode(jwt);
-    const booking = await Booking.findOneBy({ id: id });
+    const booking = await Booking.findOne({ 
+      where: { id: id },
+      relations: ['actor','hall']
+    });
+    console.log(booking);
     if (user.isAdmin && booking) {
       booking.pending = false;
+      const mailData = {
+        from: "jesus2169.god@gmail.com",
+        to: booking.actor.email,
+        subject: "LHMS Booking",
+        text: "Request Accecpted",
+      };
       if (ac) {
         Booking.update({ id: id }, { ...booking });
-        transporter.sendMail(mailData1, function (err, info) {
-          if (err) console.log(err);
-          else console.log(info);
-        });
       } else {
         await Booking.delete({ id: id });
-        transporter.sendMail(mailData2, function (err, info) {
-          if (err) console.log(err);
-          else console.log(info);
-        });
+        mailData.text = "Request Rejected";
       }
+      transporter.sendMail(mailData, function (err, info) {
+        if (err) console.log(err);
+        else console.log(info);
+      });
       res.send("oka");
     } else {
       res.send(null);
     }
   }
 });
-router.post("/api/acceptAll", async (req, res) => {
-  await Booking.clear();
-  return;
+router.post("/api/dropAll", async (req, res) => {
+  const secret: string = process.env.DATABASE_DROP_SECRET as string;
+  if (req.body.secret == secret) {
+    await Booking.clear();
+    // await Hall.clear();
+    // await User.clear();
+    res.send("Datebase clear");
+    return;
+  }
 });
-
 export { router as UserRouter };

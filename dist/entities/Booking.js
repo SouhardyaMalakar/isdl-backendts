@@ -21,16 +21,10 @@ __decorate([
 ], Booking.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => User_1.User, user => user.bookings, { onDelete: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({
-        name: 'actor_id'
-    }),
     __metadata("design:type", User_1.User)
 ], Booking.prototype, "actor", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => Hall_1.Hall, hall => hall.bookings, { onDelete: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({
-        name: 'hall_id'
-    }),
     __metadata("design:type", Hall_1.Hall)
 ], Booking.prototype, "hall", void 0);
 __decorate([

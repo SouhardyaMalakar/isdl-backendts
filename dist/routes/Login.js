@@ -18,15 +18,16 @@ const router = express_1.default.Router();
 exports.LoginRouter = router;
 const User_1 = require("../entities/User");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+require('dotenv').config();
 router.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("here!!");
     const { email, password } = req.body;
+    const secret = process.env.ACCESS_TOKEN_SECRET;
     const user = yield User_1.User.findOneBy({ email: email });
     if (user == null) {
         res.send("User not Found!");
     }
     else if (user.password == password) {
-        const token = jsonwebtoken_1.default.sign(Object.assign({}, user), 'kingcrab');
+        const token = jsonwebtoken_1.default.sign(Object.assign({}, user), secret);
         res.send({ jwt: token });
     }
     else

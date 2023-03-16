@@ -21,27 +21,17 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const jwt_decode_1 = __importDefault(require("jwt-decode"));
 const Booking_1 = require("../entities/Booking");
 const nodemailer_1 = __importDefault(require("nodemailer"));
+require("dotenv").config();
+const pswd = process.env.ACCESS_PASSWORD;
 const transporter = nodemailer_1.default.createTransport({
     port: 465,
     host: "smtp.gmail.com",
     auth: {
-        user: "20ucs197@lnmiit.ac.in",
-        pass: "Jesus@69420",
+        user: "jesus2169.god@gmail.com",
+        pass: pswd,
     },
     secure: true,
 });
-const mailData1 = {
-    from: "20ucs197@lnmiit.ac.in",
-    to: "souhardyamalakar.cob@gmail.com",
-    subject: "LHMS Booking",
-    text: "Request Accecpted",
-};
-const mailData2 = {
-    from: "20ucs197@lnmiit.ac.in",
-    to: "souhardyamalakar.cob@gmail.com",
-    subject: "LHMS Booking",
-    text: "Request Denied",
-};
 router.post("/api/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password, username, isAdmin } = req.body;
     const user1 = yield User_1.User.findOneBy({ email: email });
@@ -61,16 +51,24 @@ router.post("/api/register", (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 router.post("/api/getAllPending", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { jwt } = req.body;
-    const secret = "kingcrab";
-    const verify = jsonwebtoken_1.default.verify(jwt, secret);
+    if (!jwt)
+        return res.send("unauthorised access");
+    const secret = process.env.ACCESS_TOKEN_SECRET;
+    let verify;
+    try {
+        verify = jsonwebtoken_1.default.verify(jwt, secret);
+    }
+    catch (err) {
+        res.send(err.body);
+    }
     if (verify) {
         const user = (0, jwt_decode_1.default)(jwt);
-        console.log(user);
         if (user.isAdmin) {
             const pendings = yield Booking_1.Booking.find({
                 where: {
                     pending: true,
                 },
+                relations: ['actor', 'hall']
             });
             res.send(pendings);
         }
@@ -78,34 +76,48 @@ router.post("/api/getAllPending", (req, res) => __awaiter(void 0, void 0, void 0
             res.send("Invalid Access");
         }
     }
+    return;
 }));
 router.post("/api/acceptRequest", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { jwt, id, ac } = req.body;
-    const secret = "kingcrab";
-    const verify = jsonwebtoken_1.default.verify(jwt, secret);
+    if (!jwt)
+        return;
+    const secret = process.env.ACCESS_TOKEN_SECRET;
+    let verify;
+    try {
+        verify = jsonwebtoken_1.default.verify(jwt, secret);
+    }
+    catch (err) {
+        res.send(err.body);
+    }
     if (verify) {
         const user = (0, jwt_decode_1.default)(jwt);
-        const booking = yield Booking_1.Booking.findOneBy({ id: id });
+        const booking = yield Booking_1.Booking.findOne({
+            where: { id: id },
+            relations: ['actor', 'hall']
+        });
+        console.log(booking);
         if (user.isAdmin && booking) {
             booking.pending = false;
+            const mailData = {
+                from: "jesus2169.god@gmail.com",
+                to: booking.actor.email,
+                subject: "LHMS Booking",
+                text: "Request Accecpted",
+            };
             if (ac) {
                 Booking_1.Booking.update({ id: id }, Object.assign({}, booking));
-                transporter.sendMail(mailData1, function (err, info) {
-                    if (err)
-                        console.log(err);
-                    else
-                        console.log(info);
-                });
             }
             else {
                 yield Booking_1.Booking.delete({ id: id });
-                transporter.sendMail(mailData2, function (err, info) {
-                    if (err)
-                        console.log(err);
-                    else
-                        console.log(info);
-                });
+                mailData.text = "Request Rejected";
             }
+            transporter.sendMail(mailData, function (err, info) {
+                if (err)
+                    console.log(err);
+                else
+                    console.log(info);
+            });
             res.send("oka");
         }
         else {
@@ -113,8 +125,12 @@ router.post("/api/acceptRequest", (req, res) => __awaiter(void 0, void 0, void 0
         }
     }
 }));
-router.post("/api/acceptAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield Booking_1.Booking.clear();
-    return;
+router.post("/api/dropAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const secret = process.env.DATABASE_DROP_SECRET;
+    if (req.body.secret == secret) {
+        yield Booking_1.Booking.clear();
+        res.send("Datebase clear");
+        return;
+    }
 }));
 //# sourceMappingURL=User_routes.js.map

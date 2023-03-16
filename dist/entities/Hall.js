@@ -24,7 +24,7 @@ __decorate([
     __metadata("design:type", String)
 ], Hall.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Booking_1.Booking, booking => booking.hall),
+    (0, typeorm_1.OneToMany)(() => Booking_1.Booking, booking => booking.hall, { onDelete: "CASCADE" }),
     __metadata("design:type", Array)
 ], Hall.prototype, "bookings", void 0);
 __decorate([
