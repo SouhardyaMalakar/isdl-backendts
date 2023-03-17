@@ -16,7 +16,7 @@ import { Server } from "socket.io";
 const app = express();
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:300",
     credentials: true,
   })
 );
