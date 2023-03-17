@@ -1,9 +1,9 @@
 import express from "express";
 const router = express.Router();
-import { User } from "src/entities/User";
+import { User } from "../entities/User";
 import Jwt from "jsonwebtoken";
 import jwt_decode from "jwt-decode";
-import { Booking } from "src/entities/Booking";
+import { Booking } from "../entities/Booking";
 import nodemailer from "nodemailer";
 require("dotenv").config();
 
