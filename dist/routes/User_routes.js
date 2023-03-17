@@ -16,10 +16,10 @@ exports.UserRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 exports.UserRouter = router;
-const User_1 = require("../entities/User");
+const User_1 = require("src/entities/User");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const jwt_decode_1 = __importDefault(require("jwt-decode"));
-const Booking_1 = require("../entities/Booking");
+const Booking_1 = require("src/entities/Booking");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 require("dotenv").config();
 const pswd = process.env.ACCESS_PASSWORD;
@@ -96,7 +96,6 @@ router.post("/api/acceptRequest", (req, res) => __awaiter(void 0, void 0, void 0
             where: { id: id },
             relations: ['actor', 'hall']
         });
-        console.log(booking);
         if (user.isAdmin && booking) {
             booking.pending = false;
             const mailData = {

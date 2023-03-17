@@ -27,7 +27,7 @@ const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000",
+    origin: "",
     credentials: true,
 }));
 app.use(body_parser_1.default.json());
@@ -40,12 +40,13 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, typeorm_1.createConnection)({
             type: "postgres",
-            host: "localhost",
+            host: process.env.DATABASE_HOST,
             port: 5432,
-            username: "postgres",
-            password: "2002",
-            database: "postgres",
+            username: process.env.DATABASE_USER,
+            password: process.env.DATABASE_PSWD,
+            database: "isdl_database",
             synchronize: true,
+            logging: true,
             entities: [User_1.User, Hall_1.Hall, Booking_1.Booking],
         });
         console.log("connected to database !");
