@@ -27,7 +27,8 @@ router.post("/api/createBooking", async (req, res) => {
     const user: User = jwt_decode(jwt);
     const hall: Hall | null = await Hall.findOneBy({ id: hall_id });
     if (!user || !hall) {
-      return res.send("user does not exist !");
+      res.send("user does not exist !");
+      return
     }
     const booking = Booking.create({
       actor: user,
@@ -39,7 +40,7 @@ router.post("/api/createBooking", async (req, res) => {
     });
     await booking.save();
     res.send(booking);
-  } else return res.send("user does not exist !");
+  } else res.send("user does not exist !");
 });
 
 router.get("/api/getAllBookings", async (req, res) => {
@@ -57,13 +58,15 @@ router.post("/api/getHallBookings", async (req, res) => {
 
 router.post("/api/getUserBookings", async (req, res) => {
   const { jwt } = req.body;
-  if (!jwt) return res.send("unauthorised access");
+  if (!jwt){ res.send("unauthorised access");}
+    else{
   const secret: string = process.env.ACCESS_TOKEN_SECRET as string;
   let verify; 
   try{
     verify = Jwt.verify(jwt, secret);
   }catch(err){
-    return res.send(err.body);
+    res.send(err.body);
+    return 
   }
   if (verify) {
     const user: User = jwt_decode(jwt);
@@ -74,7 +77,8 @@ router.post("/api/getUserBookings", async (req, res) => {
     });
     res.send(Bookings);
   }
-  else return res.send("something went wrong !")
+  else res.send("something went wrong !")
+    }
 });
 
 export { router as BookingRouter };

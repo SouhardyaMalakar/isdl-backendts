@@ -43,7 +43,8 @@ router.post("/api/createBooking", (req, res) => __awaiter(void 0, void 0, void 0
         const user = (0, jwt_decode_1.default)(jwt);
         const hall = yield Hall_1.Hall.findOneBy({ id: hall_id });
         if (!user || !hall) {
-            return res.send("user does not exist !");
+            res.send("user does not exist !");
+            return;
         }
         const booking = Booking_1.Booking.create({
             actor: user,
@@ -57,7 +58,7 @@ router.post("/api/createBooking", (req, res) => __awaiter(void 0, void 0, void 0
         res.send(booking);
     }
     else
-        return res.send("user does not exist !");
+        res.send("user does not exist !");
 }));
 router.get("/api/getAllBookings", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const Bookings = yield Booking_1.Booking.find();
@@ -73,26 +74,30 @@ router.post("/api/getHallBookings", (req, res) => __awaiter(void 0, void 0, void
 }));
 router.post("/api/getUserBookings", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { jwt } = req.body;
-    if (!jwt)
-        return res.send("unauthorised access");
-    const secret = process.env.ACCESS_TOKEN_SECRET;
-    let verify;
-    try {
-        verify = jsonwebtoken_1.default.verify(jwt, secret);
+    if (!jwt) {
+        res.send("unauthorised access");
     }
-    catch (err) {
-        return res.send(err.body);
+    else {
+        const secret = process.env.ACCESS_TOKEN_SECRET;
+        let verify;
+        try {
+            verify = jsonwebtoken_1.default.verify(jwt, secret);
+        }
+        catch (err) {
+            res.send(err.body);
+            return;
+        }
+        if (verify) {
+            const user = (0, jwt_decode_1.default)(jwt);
+            const Bookings = yield Booking_1.Booking.find({
+                where: {
+                    actor: { id: user.id },
+                },
+            });
+            res.send(Bookings);
+        }
+        else
+            res.send("something went wrong !");
     }
-    if (verify) {
-        const user = (0, jwt_decode_1.default)(jwt);
-        const Bookings = yield Booking_1.Booking.find({
-            where: {
-                actor: { id: user.id },
-            },
-        });
-        res.send(Bookings);
-    }
-    else
-        return res.send("something went wrong !");
 }));
 //# sourceMappingURL=Booking_routes.js.map
