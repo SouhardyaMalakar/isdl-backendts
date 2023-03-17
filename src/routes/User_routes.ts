@@ -79,7 +79,6 @@ router.post("/api/acceptRequest", async (req, res) => {
       where: { id: id },
       relations: ['actor','hall']
     });
-    console.log(booking);
     if (user.isAdmin && booking) {
       booking.pending = false;
       const mailData = {
@@ -93,6 +92,7 @@ router.post("/api/acceptRequest", async (req, res) => {
       } else {
         await Booking.delete({ id: id });
         mailData.text = "Request Rejected";
+        
       }
       transporter.sendMail(mailData, function (err, info) {
         if (err) console.log(err);
