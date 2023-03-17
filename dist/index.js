@@ -27,7 +27,7 @@ const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: '*',
+    origin: "http://localhost:3000",
     credentials: true,
 }));
 app.use(body_parser_1.default.json());
@@ -36,9 +36,6 @@ app.use(User_routes_1.UserRouter);
 app.use(Login_1.LoginRouter);
 app.use(Hall_routes_1.HallRouter);
 app.use(Booking_routes_1.BookingRouter);
-app.get("/", function (req, res) {
-    res.send("hello");
-});
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, typeorm_1.createConnection)({
@@ -57,44 +54,47 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.log(error);
     }
-    const server = (0, http_1.createServer)(app);
-    const io = new socket_io_1.Server(server, {
-        cors: {
-            origin: "http://localhost:3000",
-            methods: ["GET", "POST"],
-        },
-    });
-    io.on("connection", (socket) => {
-        console.log("user connected : " + socket.id);
-        socket.on("disconnect", () => {
-            console.log("user disconnected");
-        });
-        socket.on("message", (message) => {
-            console.log("received message:", message);
-            io.emit("message", message);
-        });
-        socket.on("join", (roomName) => {
-            console.log("user joined room " + roomName);
-            if (roomName !== undefined && roomName !== "undefined") {
-                socket.join(roomName);
-            }
-        });
-        socket.on("leave", (roomName) => {
-            console.log("user left room " + roomName);
-            if (roomName !== undefined && roomName !== "undefined") {
-                socket.leave(roomName);
-            }
-        });
-        socket.on("change", (roomName) => {
-            console.log("change on " + roomName);
-            if (roomName !== undefined && roomName !== "undefined") {
-                socket.to(roomName).emit("update");
-            }
-        });
-    });
-    app.listen(4000, () => {
-        console.log("Server started");
-    });
 });
 main();
+app.get("/", function (req, res) {
+    res.send("hello");
+});
+app.listen(4000, () => {
+    console.log("Server started");
+});
+const server = (0, http_1.createServer)(app);
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+    },
+});
+io.on("connection", (socket) => {
+    console.log("user connected : " + socket.id);
+    socket.on("disconnect", () => {
+        console.log("user disconnected");
+    });
+    socket.on("message", (message) => {
+        console.log("received message:", message);
+        io.emit("message", message);
+    });
+    socket.on("join", (roomName) => {
+        console.log("user joined room " + roomName);
+        if (roomName !== undefined && roomName !== "undefined") {
+            socket.join(roomName);
+        }
+    });
+    socket.on("leave", (roomName) => {
+        console.log("user left room " + roomName);
+        if (roomName !== undefined && roomName !== "undefined") {
+            socket.leave(roomName);
+        }
+    });
+    socket.on("change", (roomName) => {
+        console.log("change on " + roomName);
+        if (roomName !== undefined && roomName !== "undefined") {
+            socket.to(roomName).emit("update");
+        }
+    });
+});
 //# sourceMappingURL=index.js.map
