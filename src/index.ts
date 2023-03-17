@@ -16,7 +16,7 @@ import { Server } from "socket.io";
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "",
     credentials: true,
   })
 );
@@ -30,13 +30,13 @@ const main = async () => {
   try {
     await createConnection({
       type: "postgres",
-      host: "localhost",
+      host: process.env.DATABASE_HOST,
       port: 5432,
-      username: "postgres",
-      password: "2002",
-      database: "postgres",
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PSWD,
+      database: "isdl_database",
       synchronize: true,
-      // logging: true,
+      logging: true,
       entities: [User, Hall, Booking],
     });
     console.log("connected to database !");
