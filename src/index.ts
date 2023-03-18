@@ -15,12 +15,12 @@ import { Server, Socket } from "socket.io";
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND,
     credentials: true,
   })
 );
 app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Origin', process.env.FRONTEND );
   res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
   res.send(200);
@@ -41,7 +41,7 @@ const main = async () => {
       port: 5432,
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PSWD,
-      database: "isdl_database",
+      database: process.env.DATABASE,
       synchronize: true,
       // logging: true,
       entities: [User, Hall, Booking],
@@ -50,7 +50,6 @@ const main = async () => {
   } catch (error) {
     console.log(error);
   }
-
   const server = createServer(app);
   const io = new Server(server, {
     cors: {

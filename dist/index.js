@@ -27,11 +27,11 @@ const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND,
     credentials: true,
 }));
 app.options('*', (req, res) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Origin', process.env.FRONTEND);
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     res.send(200);
@@ -50,7 +50,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             port: 5432,
             username: process.env.DATABASE_USER,
             password: process.env.DATABASE_PSWD,
-            database: "isdl_database",
+            database: process.env.DATABASE,
             synchronize: true,
             entities: [User_1.User, Hall_1.Hall, Booking_1.Booking],
         });
