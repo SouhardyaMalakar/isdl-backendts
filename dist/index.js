@@ -50,7 +50,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             port: 5432,
             username: process.env.DATABASE_USER,
             password: process.env.DATABASE_PSWD,
-            database: "postgres",
+            database: "isdl_database",
             synchronize: true,
             entities: [User_1.User, Hall_1.Hall, Booking_1.Booking],
         });

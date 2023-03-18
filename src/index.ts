@@ -41,7 +41,7 @@ const main = async () => {
       port: 5432,
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PSWD,
-      database: "postgres",
+      database: "isdl_database",
       synchronize: true,
       // logging: true,
       entities: [User, Hall, Booking],
