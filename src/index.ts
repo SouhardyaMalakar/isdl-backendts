@@ -10,8 +10,7 @@ import { LoginRouter } from "./routes/Login";
 import { HallRouter } from "./routes/Hall_routes";
 import { BookingRouter } from "./routes/Booking_routes";
 import { createServer } from "http";
-import { Socket } from "socket.io";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 const app = express();
 app.use(
@@ -51,55 +50,56 @@ const main = async () => {
   } catch (error) {
     console.log(error);
   }
-};
-main();
-app.get("/", function (req, res) {
-  res.send("hello");
-});
-app.listen(4000, () => {
-  console.log("Server started");
-});
-const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
 
-io.on("connection", (socket: Socket) => {
-  console.log("user connected : " + socket.id);
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-
-  socket.on("message", (message) => {
-    console.log("received message:", message);
-    io.emit("message", message);
+  const server = createServer(app);
+  const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+    },
   });
   
-  socket.on("join", (roomName: string) => {
-    console.log("user joined room "+ roomName)
-    if (roomName !== undefined && roomName !== "undefined") {
-      socket.join(roomName);
-    }
+  io.sockets.on("connection", (socket: Socket) => {
+    console.log("user connected : " + socket.id);
+  
+    socket.on("disconnect", () => {
+      console.log("user disconnected");
+    });
+  
+    socket.on("message", (message) => {
+      console.log("received message:", message);
+      io.emit("message", message);
+    });
+    
+    socket.on("join", (roomName: string) => {
+      console.log("user joined room "+ roomName)
+      if (roomName !== undefined && roomName !== "undefined") {
+        socket.join(roomName);
+      }
+    });
+    socket.on("leave", (roomName: string) => {
+      console.log("user left room "+ roomName)
+      if (roomName !== undefined && roomName !== "undefined") { 
+        socket.leave(roomName);
+      }
+    });
+    socket.on("change", (roomName: string) => {
+      console.log("change on "+ roomName)
+      if (roomName !== undefined && roomName !== "undefined") {
+          socket.to(roomName).emit("update");
+      }
+    });
   });
-  socket.on("leave", (roomName: string) => {
-    console.log("user left room "+ roomName)
-    if (roomName !== undefined && roomName !== "undefined") { 
-      socket.leave(roomName);
-    }
+
+  app.get("/", function (req, res) {
+    res.send("hello");
   });
-  socket.on("change", (roomName: string) => {
-    console.log("change on "+ roomName)
-    if (roomName !== undefined && roomName !== "undefined") {
-        socket.to(roomName).emit("update");
-    }
+  app.listen(4000, () => {
+    console.log("Server started");
   });
+};
+main().catch((err) => {
+  console.log(err);
 });
 
-server.listen(5000, () => {
-  console.log(`Server is running on port 5000`);
-});
 
