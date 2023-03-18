@@ -30,6 +30,12 @@ app.use((0, cors_1.default)({
     origin: "http://localhost:3000",
     credentials: true,
 }));
+app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.send(200);
+});
 app.use(body_parser_1.default.json());
 app.use(express_1.default.json());
 app.use(User_routes_1.UserRouter);
@@ -44,9 +50,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             port: 5432,
             username: process.env.DATABASE_USER,
             password: process.env.DATABASE_PSWD,
-            database: "isdl_database",
+            database: "postgres",
             synchronize: true,
-            logging: true,
             entities: [User_1.User, Hall_1.Hall, Booking_1.Booking],
         });
         console.log("connected to database !");
@@ -54,50 +59,49 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.log(error);
     }
-});
-main();
-app.get("/", function (req, res) {
-    res.send("hello");
-});
-app.listen(4000, () => {
-    console.log("Server started");
-});
-const server = (0, http_1.createServer)(app);
-const io = new socket_io_1.Server(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"],
-    },
-});
-io.on("connection", (socket) => {
-    console.log("user connected : " + socket.id);
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
+    const server = (0, http_1.createServer)(app);
+    const io = new socket_io_1.Server(server, {
+        cors: {
+            origin: "*",
+            methods: ["GET", "POST"],
+        },
     });
-    socket.on("message", (message) => {
-        console.log("received message:", message);
-        io.emit("message", message);
+    io.sockets.on("connection", (socket) => {
+        console.log("user connected : " + socket.id);
+        socket.on("disconnect", () => {
+            console.log("user disconnected");
+        });
+        socket.on("message", (message) => {
+            console.log("received message:", message);
+            io.emit("message", message);
+        });
+        socket.on("join", (roomName) => {
+            console.log("user joined room " + roomName);
+            if (roomName !== undefined && roomName !== "undefined") {
+                socket.join(roomName);
+            }
+        });
+        socket.on("leave", (roomName) => {
+            console.log("user left room " + roomName);
+            if (roomName !== undefined && roomName !== "undefined") {
+                socket.leave(roomName);
+            }
+        });
+        socket.on("change", (roomName) => {
+            console.log("change on " + roomName);
+            if (roomName !== undefined && roomName !== "undefined") {
+                socket.to(roomName).emit("update");
+            }
+        });
     });
-    socket.on("join", (roomName) => {
-        console.log("user joined room " + roomName);
-        if (roomName !== undefined && roomName !== "undefined") {
-            socket.join(roomName);
-        }
+    app.get("/", function (req, res) {
+        res.send("hello");
     });
-    socket.on("leave", (roomName) => {
-        console.log("user left room " + roomName);
-        if (roomName !== undefined && roomName !== "undefined") {
-            socket.leave(roomName);
-        }
-    });
-    socket.on("change", (roomName) => {
-        console.log("change on " + roomName);
-        if (roomName !== undefined && roomName !== "undefined") {
-            socket.to(roomName).emit("update");
-        }
+    server.listen(8080, () => {
+        console.log("Listening on port 8080");
     });
 });
-server.listen(5000, () => {
-    console.log(`Server is running on port 5000`);
+main().catch((err) => {
+    console.log(err);
 });
 //# sourceMappingURL=index.js.map

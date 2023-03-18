@@ -41,9 +41,9 @@ const main = async () => {
       port: 5432,
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PSWD,
-      database: "isdl_database",
+      database: "postgres",
       synchronize: true,
-      logging: true,
+      // logging: true,
       entities: [User, Hall, Booking],
     });
     console.log("connected to database !");
@@ -54,7 +54,7 @@ const main = async () => {
   const server = createServer(app);
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "*",
       methods: ["GET", "POST"],
     },
   });
@@ -94,9 +94,10 @@ const main = async () => {
   app.get("/", function (req, res) {
     res.send("hello");
   });
-  app.listen(4000, () => {
-    console.log("Server started");
+  server.listen(8080, () => {
+    console.log("Listening on port 8080");
   });
+
 };
 main().catch((err) => {
   console.log(err);
