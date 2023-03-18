@@ -74,6 +74,7 @@ router.post("/api/getUserBookings", async (req, res) => {
       where: {
         actor: { id: user.id },
       },
+      relations: ['actor','hall']
     });
     res.send(Bookings);
   }
