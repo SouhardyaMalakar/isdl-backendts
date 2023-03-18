@@ -5,7 +5,6 @@ import Jwt from "jsonwebtoken";
 import jwt_decode from "jwt-decode";
 import { Booking } from "../entities/Booking";
 import nodemailer from "nodemailer";
-import bcrypt from "bcrypt";
 require("dotenv").config();
 
 const pswd: string = process.env.ACCESS_PASSWORD as string;
@@ -24,24 +23,15 @@ router.post("/api/register", async (req, res) => {
   const user1: User | null = await User.findOneBy({ email: email });
   if (user1 != null) res.send("Email already taken");
   else {
-    let hash;
-    bcrypt.hash(password, 10, (err,hash) => {
-      if (err) {
-        console.error(err);
-      } else {
-        hash=hash;
-      }
-    })
     const user = User.create({
       name: name,
       email: email,
-      // hash pswd
-      password: hash,
+      password: password,
       username: username,
       isAdmin: isAdmin,
     });
+    await user.hashPassword();
     await user.save();
-    res.send(user);
   }
 });
 
@@ -97,7 +87,7 @@ router.post("/api/acceptRequest", async (req, res) => {
         subject: "LHMS Booking",
         text: "Hall booking request Accecpted !!" + "\n Hall : " + booking.hall.id + "\n Start: "+  booking.slotStart + "\n End: "+ booking.slotEnd
       };
-      if (ac==true) {
+      if (ac) {
         Booking.update({ id: id }, { ...booking });
       } else {
         await Booking.delete({ id: id });

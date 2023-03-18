@@ -1,6 +1,6 @@
 import {Entity, BaseEntity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm"
 import { Booking } from "./Booking"
- 
+import bcrypt from "bcrypt"
 @Entity('user')
 export class User extends BaseEntity {
     @Column({primary: true})
@@ -25,7 +25,9 @@ export class User extends BaseEntity {
     @Column()
     isAdmin: boolean;
 
-    
+    async hashPassword() {
+        this.password = await bcrypt.hash(this.password, 10);
+    }    
 }
 
 
