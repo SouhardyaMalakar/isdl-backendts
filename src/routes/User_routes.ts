@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   host: "smtp.gmail.com",
   auth: {
-    user: "jesus2169.god@gmail.com",
+    user: process.env.ACCESS_EMAIL,
     pass: pswd,
   },
   secure: true,
@@ -82,16 +82,16 @@ router.post("/api/acceptRequest", async (req, res) => {
     if (user.isAdmin && booking) {
       booking.pending = false;
       const mailData = {
-        from: "jesus2169.god@gmail.com",
+        from: process.env.ACCESS_EMAIL,
         to: booking.actor.email,
         subject: "LHMS Booking",
-        text: "Request Accecpted",
+        text: "Hall booking request Accecpted !!" + "\n Hall : " + booking.hall.id + "\n Start: "+  booking.slotStart + "\n End: "+ booking.slotEnd
       };
       if (ac) {
         Booking.update({ id: id }, { ...booking });
       } else {
         await Booking.delete({ id: id });
-        mailData.text = "Request Rejected";
+        mailData.text = "Hall booking request Rejected !!" + "\n Hall : " + booking.hall.id + "\n Start: "+  booking.slotStart + "\n End: "+ booking.slotEnd
         
       }
       transporter.sendMail(mailData, function (err, info) {

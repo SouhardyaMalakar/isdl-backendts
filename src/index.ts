@@ -41,7 +41,7 @@ const main = async () => {
       port: 5432,
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PSWD,
-      database: "isdl_database",
+      database: "postgres",
       synchronize: true,
       // logging: true,
       entities: [User, Hall, Booking],
@@ -94,7 +94,7 @@ const main = async () => {
   app.get("/", function (req, res) {
     res.send("hello");
   });
-  server.listen(8080, () => {
+  server.listen(4000, () => {
     console.log("Listening on port 8080");
   });
 

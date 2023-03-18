@@ -50,7 +50,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             port: 5432,
             username: process.env.DATABASE_USER,
             password: process.env.DATABASE_PSWD,
-            database: "isdl_database",
+            database: "postgres",
             synchronize: true,
             entities: [User_1.User, Hall_1.Hall, Booking_1.Booking],
         });
@@ -97,7 +97,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     app.get("/", function (req, res) {
         res.send("hello");
     });
-    server.listen(8080, () => {
+    server.listen(4000, () => {
         console.log("Listening on port 8080");
     });
 });
