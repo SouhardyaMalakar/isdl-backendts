@@ -21,6 +21,7 @@ const transporter = nodemailer.createTransport({
 router.post("/api/register", async (req, res) => {
   const { name, email, password, username, isAdmin } = req.body;
   const user1: User | null = await User.findOneBy({ email: email });
+  console.log(user1)
   if (user1 != null) res.send("Email already taken");
   else {
     const user = User.create({
